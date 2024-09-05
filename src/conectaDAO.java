@@ -4,30 +4,30 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
-
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
-/**
- *
- * @author Adm
- */
 public class conectaDAO {
     
-    public Connection connectDB(){
-        Connection conn = null;
+    private Connection conexao;
+
+    public Connection conectDB() {
+        return conexao;
+    }
         
+    public void conectarDB() throws SQLException{
         try {
-        
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/uc11?user=root&password=");
-            
-        } catch (SQLException erro){
+            conexao = DriverManager.getConnection("jdbc:mysql://localhost/uc11", "root", "abc123");
+        } catch (SQLException erro) {
             JOptionPane.showMessageDialog(null, "Erro ConectaDAO" + erro.getMessage());
         }
-        return conn;
     }
     
+    public void desconectarDB(){
+        try{
+            if(conexao != null && !conexao.isClosed()){
+                conexao.close();
+                System.out.println("Desconectado com sucesso!");
+            }
+        }catch (SQLException e){
+            System.out.println("Erro ao desconcetar");
+        }
+    }    
 }
