@@ -9,11 +9,6 @@ import java.sql.SQLException;
 
 public class ProdutosDAO {
 
-    Connection conexao;
-    PreparedStatement prep;
-    ResultSet resultset;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
-
     public static void cadastrarProduto(ProdutosDTO produto) {
         try{
             //conexao com BD
@@ -39,8 +34,36 @@ public class ProdutosDAO {
         }    
     }
 
-    public ArrayList<ProdutosDTO> listarProdutos() {
+    public static ArrayList<ProdutosDTO> listarProdutos() {
+        ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+        
+        try{
+            //conectar ao BD
+            conectaDAO conecta = new conectaDAO();
+            conecta.conectarDB();
 
-        return listagem;
+            //Instrução SQL
+            String sql = "SELECT * FROM produtos";
+            PreparedStatement busca = conecta.conectDB().prepareStatement(sql);
+
+            //Executar a instrução SQL e pegar os resultados
+            //ResultSet -> Classe do Java que armazena os resultados de uma QUERY (busca) feita em SQL
+            ResultSet resposta = busca.executeQuery(sql);
+
+            while (resposta.next()) {
+                ProdutosDTO produto = new ProdutosDTO();
+
+                produto.setId(resposta.getInt("id"));
+                produto.setNome(resposta.getString("nome"));
+                produto.setValor(resposta.getInt("valor"));
+                produto.setStatus(resposta.getString("status"));
+                listagem.add(produto);
+            }
+            //Desconectar do banco
+            conecta.desconectarDB();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Erro ao listar os registros do banco de dados!");            
+        }
+        return listagem;    
     }
 }

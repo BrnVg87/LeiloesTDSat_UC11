@@ -1,4 +1,5 @@
 
+import java.awt.List;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -43,17 +44,7 @@ public class listagemVIEW extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        listaProdutos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "ID", "Nome", "Valor", "Status"
-            }
-        ));
+        listaProdutos.setModel(montarTabela());
         jScrollPane1.setViewportView(listaProdutos);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
@@ -186,6 +177,29 @@ public class listagemVIEW extends javax.swing.JFrame {
                 new listagemVIEW().setVisible(true);
             }
         });
+    }
+    
+        private DefaultTableModel montarTabela(){
+        String[] colunas = {"ID", "Nome", "Valor", "Status"};
+        
+        // Criamos a tabela
+        DefaultTableModel tabela = new DefaultTableModel(colunas, 0);
+        
+        ArrayList<ProdutosDTO> listagem = ProdutosDAO.listarProdutos();
+        
+        for(int i = 0; i < listagem.size(); i ++) {
+            ProdutosDTO produto = listagem.get(i);
+            
+            String[] linha = {
+              Integer.toString(produto.getId()),
+              produto.getNome(),
+              Integer.toString(produto.getValor()),
+              produto.getStatus(),
+            };
+            
+            tabela.addRow(linha);
+        }
+        return tabela;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
