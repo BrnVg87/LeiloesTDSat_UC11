@@ -1,6 +1,7 @@
 
 import java.awt.List;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -43,8 +44,20 @@ public class listagemVIEW extends javax.swing.JFrame {
         btnVoltar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+                formWindowGainedFocus(evt);
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
+            }
+        });
 
         listaProdutos.setModel(montarTabela());
+        listaProdutos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                listaProdutosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(listaProdutos);
 
         jLabel1.setFont(new java.awt.Font("Lucida Fax", 0, 18)); // NOI18N
@@ -53,6 +66,11 @@ public class listagemVIEW extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Lucida Fax", 0, 14)); // NOI18N
         jLabel2.setText("Vender Produto (ID)");
 
+        id_produto_venda.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                id_produto_vendaFocusGained(evt);
+            }
+        });
         jScrollPane2.setViewportView(id_produto_venda);
 
         btnVender.setText("Vender");
@@ -127,22 +145,44 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
+
+        ProdutosDAO produtodao = new ProdutosDAO();
+        ProdutosDTO produto = new ProdutosDTO();
+         
+        int id = Integer.parseInt(id_produto_venda.getText());        
         
-        ProdutosDAO produtosdao = new ProdutosDAO();
+        produto = produtodao.buscarId(id);
         
-        //produtosdao.venderProduto(Integer.parseInt(id));
+        if(produtodao.venderProduto(produto)) {
+            JOptionPane.showMessageDialog(null, "Produto vendido com sucesso!");
+            id_produto_venda.setText("");
+        } else {
+            JOptionPane.showMessageDialog(null, "Venda não realizada!");            
+        }        
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+        vendasVIEW vendas = new vendasVIEW(); 
+        vendas.setVisible(true);
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
+
+    private void id_produto_vendaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_id_produto_vendaFocusGained
+        // TODO add your handling code here:       
+    }//GEN-LAST:event_id_produto_vendaFocusGained
+
+    private void listaProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_listaProdutosMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_listaProdutosMouseClicked
+
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
+        initComponents();
+        listarProdutos();
+    }//GEN-LAST:event_formWindowGainedFocus
 
     /**
      * @param args the command line arguments
@@ -201,6 +241,14 @@ public class listagemVIEW extends javax.swing.JFrame {
         }
         return tabela;
     }
+        
+    private int getPosicao() {
+        int posicao = listaProdutos.getSelectedRow();
+        if(posicao <= -1) {
+            JOptionPane.showMessageDialog(null, "Selecione um item.");
+        }     
+        return Integer.parseInt( (String) listaProdutos.getValueAt(posicao, 0) );
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnVendas;
@@ -233,7 +281,6 @@ public class listagemVIEW extends javax.swing.JFrame {
                 });
             }
         } catch (Exception e) {
-        }
-    
+        }    
     }
 }
